@@ -11,7 +11,7 @@
     None
 
 .NOTES
-    Version       : 1.2b
+    Version       : 1.3b
     Author        : Michael Mardahl
     Twitter       : @michael_mardahl
     Blogging on   : iphase.dk & www.msendpointmgr.com
@@ -67,7 +67,8 @@ function getDomainInfo {
     if(Resolve-DnsName $FQDN -Type TXT | Where-Object Strings -ILike "v=spf1*"){
 
         $resultSPF ="Present"
-        $resultSPFRecord = Resolve-DnsName $FQDN -Type TXT | Where-Object Strings -ILike "v=spf1*" | select Strings -ExpandProperty Strings
+        $resultSPFRecordArr = Resolve-DnsName $FQDN -Type TXT | Where-Object Strings -ILike "v=spf1*" | select Strings -ExpandProperty Strings
+        $resultSPFRecord = $resultSPFRecordArr -join ""
 
     }
 
