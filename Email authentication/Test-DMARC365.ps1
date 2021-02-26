@@ -11,7 +11,7 @@
     None
 
 .NOTES
-    Version       : 1.3b
+    Version       : 1.4b
     Author        : Michael Mardahl
     Twitter       : @michael_mardahl
     Blogging on   : iphase.dk & www.msendpointmgr.com
@@ -25,15 +25,20 @@
     (Needs to be executed interactively)
 
 .NOTES
-    You ned to edit the array of domains in the "declarations" region of the script.
-    If you are not familiar with arrays, please notice and keep the formatting.
+    You ned to edit the here string list of domains in the "declarations" region of the script.
+    If you are not familiar with here strings, please notice and keep the formatting.
     For more advanced cases, you can modify to use a CSV file.
 
 #>
 
 #region declarations
 
-$domainArray = @("apento.com","msendpointmgr.com","iphase.dk","microsoft.com")
+$domainList = @"
+microsoft.com
+msendpointmgr.com
+apento.com
+iphase.dk
+"@
 
 #endregion declarations
 
@@ -112,7 +117,8 @@ function getDomainInfo {
 #Array with all the domains data
 [System.Collections.ArrayList]$statusArray = @()
 
-#Iterate throguh the domains with the custom function
+#Iterate through the domains with the custom function
+$domainArray = $domainList -split "`r`n"
 foreach($dom in $domainArray){
 
     $statusArray.Add((getDomainInfo -FQDN $dom)) | Out-Null
