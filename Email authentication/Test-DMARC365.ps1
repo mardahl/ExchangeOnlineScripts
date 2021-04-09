@@ -11,7 +11,7 @@
     None
 
 .NOTES
-    Version       : 1.4b
+    Version       : 2.0
     Author        : Michael Mardahl
     Twitter       : @michael_mardahl
     Blogging on   : iphase.dk & www.msendpointmgr.com
