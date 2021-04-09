@@ -121,6 +121,8 @@ function getDomainInfo {
 
 #region execute
 
+Write-Host "[INFO] Processing domains for DMARC status..."
+
 #Array with all the domains data
 [System.Collections.ArrayList]$statusArray = @()
 
@@ -133,7 +135,10 @@ foreach($dom in $domainArray){
 
 }
 
+Write-Host "[INFO] Launching GridView."
 #Output to gridview (can be copied directly to spreadsheet
 $statusArray | Out-GridView -Title "DMARC test result" -OutputMode Multiple
+
+Write-Host "[INFO] Finished."
 
 #endregion execute
