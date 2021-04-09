@@ -62,6 +62,8 @@ function getDomainInfo {
     $resultMXRecord = "N/A";$resultDMARCRecord = "N/A"; $resultDKIMRecord = "N/A"; $resultSPFRecord = "N/A"
 
     #Testing MX, SPF, DMARC and DKIM
+
+    #MX
     if(Resolve-DnsName $FQDN -Type MX | select NameExchange -First 1 -ExpandProperty NameExchange){
 
         $resultMX = "Present"
@@ -69,6 +71,7 @@ function getDomainInfo {
 
     }
 
+    #SPF
     if(Resolve-DnsName $FQDN -Type TXT | Where-Object Strings -ILike "v=spf1*"){
 
         $resultSPF ="Present"
@@ -77,6 +80,7 @@ function getDomainInfo {
 
     }
 
+    #DMARC
     if(Resolve-DnsName "_dmarc.$FQDN" -Type TXT | Where-Object Strings -ILike "v=DMARC1*"){
 
         $resultDMARC = "Present"
@@ -84,10 +88,13 @@ function getDomainInfo {
 
     }
 
-    if((Resolve-DnsName "selector1._domainkey.$FQDN" -Type CNAME) -or (Resolve-DnsName "selector2._domainkey.$FQDN" -Type CNAME)){
+    #DKIM
+    $DKIM1 = Resolve-DnsName "selector1._domainkey.$FQDN" -Type CNAME
+    $DKIM2 = Resolve-DnsName "selector2._domainkey.$FQDN" -Type CNAME
+    if(($DKIM1.NameHost -ilike "selector1.*") -or ($DKIM2.NameHost -ilike "selector2.*")){
 
         $resultDKIM = "Present"
-        $resultDKIMRecord = "$(Resolve-DnsName "selector1._domainkey.$FQDN" -Type CNAME | select NameHost -ExpandProperty NameHost -ErrorAction SilentlyContinue) | $(Resolve-DnsName "selector2._domainkey.$FQDN" -Type CNAME | select NameHost -ExpandProperty NameHost -ErrorAction SilentlyContinue)"
+        $resultDKIMRecord = "$($DKIM1 | select NameHost -ExpandProperty NameHost -ErrorAction SilentlyContinue) | $($DKIM2 | select NameHost -ExpandProperty NameHost -ErrorAction SilentlyContinue)"
 
     }
 
@@ -117,11 +124,12 @@ function getDomainInfo {
 #Array with all the domains data
 [System.Collections.ArrayList]$statusArray = @()
 
-#Iterate through the domains with the custom function
+#Iterate throguh the domains with the custom function
 $domainArray = $domainList -split "`r`n"
 foreach($dom in $domainArray){
 
-    $statusArray.Add((getDomainInfo -FQDN $dom)) | Out-Null
+    $trimDom = $dom.Trim()
+    $statusArray.Add((getDomainInfo -FQDN $trimDom)) | Out-Null
 
 }
 
