@@ -93,7 +93,7 @@ $upn, $tempusr = $null
 
         }
     } else {
-        Write-Host "no guid" -ForegroundColor Yellow
+        Write-Host "no mailbox guid found for on-prem account - setting the one from exchange online. please run script again afterwards." -ForegroundColor Yellow
 
          $Params = @{msExchMailboxGUID = [GUID]$user.ExchangeGuid;}
          $tempusr | Set-ADUser -replace $Params
