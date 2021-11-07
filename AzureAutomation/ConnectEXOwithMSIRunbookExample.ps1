@@ -6,12 +6,12 @@
         AUTHOR: Michael Mardahl
         LASTEDIT: Nov 7, 2021
     
-    .NOTES CMDLETS
+    .NOTES
         On line 46 there is a filter on the command names (cmdlets) that get imported for use.
         You must adjust this to include the cmdlets you need.
         Please keep to a minimum as Automation has limited memory.
 
-    .PERMISSIONS
+    .NOTES
         This script requires quite excessive permission to Exchange Online in order to work with a Managed Identity.
         Assignment of these permissions is done through Azure Cloud shell using the following script.
         Remember: Set the correct ObjectID of the $MSIObjectID variable before running the script.
