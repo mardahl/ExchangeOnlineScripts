@@ -6,7 +6,7 @@
         AUTHOR: Michael Mardahl
         LASTEDIT: Nov 7, 2021
     
-    .CMDLETS
+    .NOTES CMDLETS
         On line 46 there is a filter on the command names (cmdlets) that get imported for use.
         You must adjust this to include the cmdlets you need.
         Please keep to a minimum as Automation has limited memory.
