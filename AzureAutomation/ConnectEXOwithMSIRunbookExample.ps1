@@ -7,7 +7,7 @@
         LASTEDIT: Nov 7, 2021
     
     .NOTES
-        On line 46 there is a filter on the command names (cmdlets) that get imported for use.
+        On line 49 there is a filter on the command names (cmdlets) that get imported for use.
         You must adjust this to include the cmdlets you need.
         Please keep to a minimum as Automation has limited memory.
 
@@ -15,6 +15,7 @@
         This script requires quite excessive permission to Exchange Online in order to work with a Managed Identity.
         Assignment of these permissions is done through Azure Cloud shell using the following script.
         Remember: Set the correct ObjectID of the $MSIObjectID variable before running the script.
+        NB: I used Global Reader role, but you might need Exhcange Admin role depending on your needs you can change it.
         
         #Begin script
         Connect-AzureAD
