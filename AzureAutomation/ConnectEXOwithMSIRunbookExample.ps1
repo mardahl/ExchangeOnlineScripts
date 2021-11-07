@@ -7,7 +7,7 @@
         LASTEDIT: Nov 7, 2021
     
     .NOTES
-        On line 49 there is a filter on the command names (cmdlets) that get imported for use.
+        On line 52 there is a filter on the command names (cmdlets) that get imported for use.
         You must adjust this to include the cmdlets you need.
         Please keep to a minimum as Automation has limited memory.
 
@@ -23,10 +23,14 @@
         $EXOServicePrincipal = Get-AzureADServicePrincipal -Filter "displayName eq 'Office 365 Exchange Online'"
         $Approle=$EXOServicePrincipal.AppRoles.Where({$_.Value -eq 'Exchange.ManageAsApp'})
         New-AzureADServiceAppRoleAssignment -ObjectId $MSIObjectID -Id $Approle[0].Id -PrincipalId $MSIObjectID -ResourceId $EXOServicePrincipal.ObjectId
-        $AADRole = Get-AzureADDirectoryRole | where DisplayName -eq 'Global Reader'
+        $AADRole = Get-AzureADDirectoryRole | where DisplayName -eq 'Exchange Administrator'
         Add-AzureADDirectoryRoleMember -ObjectId $AADRole.ObjectId -RefObjectId $MSIObjectID
         #End script
 #>
+
+#region declarations
+$Script:tenantDomain = "auxiliator.onmicrosoft.com" #please endter the defualt domain of the tenant the managed identity belongs to.
+#endregion declarations
 
 #region functions
 function makeMSIOAuthCred () {
@@ -41,11 +45,10 @@ function makeMSIOAuthCred () {
 function connectEXOAsMSI ($OAuthCredential) {
     #Function to connect to Exchange Online using OAuth credentials from the MSI
     $psSessions = Get-PSSession | Select-Object -Property State, Name
-    #$psSessions
     If (((@($psSessions) -like '@{State=Opened; Name=RunSpace*').Count -gt 0) -ne $true) {
         Write-Verbose "Creating new EXOPSSession..." -Verbose
         try {
-            $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/PowerShell-LiveId?BasicAuthToOAuthConversion=true -Credential $OAuthCredential -Authentication Basic -AllowRedirection
+            $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://outlook.office365.com/PowerShell-LiveId?BasicAuthToOAuthConversion=true&email=SystemMailbox%7bbb558c35-97f1-4cb9-8ff7-d53741dc928c%7d%40$tenantDomain" -Credential $OAuthCredential -Authentication Basic -AllowRedirection
             $null = Import-PSSession $Session -DisableNameChecking -CommandName "*mailbox*", "*unified*" -AllowClobber
             Write-Verbose "New EXOPSSession established!" -Verbose
         } catch {
@@ -61,6 +64,7 @@ function connectEXOAsMSI ($OAuthCredential) {
 $null = Connect-AzAccount -Identity
 connectEXOAsMSI -OAuthCredential (makeMSIOAuthCred)
 
-#Do your exo management stuff here!
+#Do some exchange scripting here!
 
+Get-PSSession | Remove-PSSession
 #endregion execute
