@@ -29,7 +29,7 @@
 #>
 
 #region declarations
-$Script:tenantDomain = "auxiliator.onmicrosoft.com" #please endter the defualt domain of the tenant the managed identity belongs to.
+$Script:tenantDomain = "xxxxxxxxxxx.onmicrosoft.com" #please endter the defualt domain of the tenant the managed identity belongs to.
 #endregion declarations
 
 #region functions
