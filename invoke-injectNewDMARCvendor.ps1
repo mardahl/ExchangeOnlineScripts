@@ -1,4 +1,4 @@
-#Script by mum@apento.com to inject new DMARC vendor into existing records, to avoid disrupting existing work with DMARC.
+#Script by github.com/mardahl to inject new DMARC vendor into existing records, to avoid disrupting existing work with DMARC.
 #NB: the script wont generate DMARC DNS values for domains without a DMARC policy.
 
 Start-Transcript .\lastrunLog$(get-date -format ddMMyyy).txt -Force
