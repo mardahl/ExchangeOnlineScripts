@@ -118,7 +118,7 @@ $htmlParams = @{
 #fix the output so we can sort the table and have issues highlighted
 $HTML = $results | ConvertTo-Html @htmlParams 
 $HTML = $HTML -replace '<TABLE>','<table class="sortable">'
-$HTML = $HTML -replace '<colgroup><col/><col/><col/><col/><col/><col/><col/></colgroup>','<thead>'
+$HTML = $HTML -replace '<colgroup><col/><col/><col/><col/><col/><col/><col/><col/></colgroup>','<thead>'
 $HTML = $HTML -replace '<th>SPFRecordPolicy</th></tr>','<th>SPFRecordPolicy</th></tr></thead><tbody>'
 $HTML = $HTML -replace '</table>','</tbody></table>'
 $HTML = $HTML -replace '<td>True</td>','<td style="background-color:#ccffcc;">True</td>'
