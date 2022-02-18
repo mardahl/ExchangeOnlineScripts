@@ -1,9 +1,6 @@
 #Script by github.com/mardahl to gather info about the state of DMARC, SPF and Office365 DKIM on a list of domains
 #MIT License
 
-#Script by mum@apento.com to gather info about the state of DMARC on a list of domains
-
-
 #region declarations
 
 #Output to CSV location
