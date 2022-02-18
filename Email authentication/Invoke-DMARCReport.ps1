@@ -1,5 +1,8 @@
-#Script by github.com/mardahl to gather info about the state of DMARC on a list of domains
+#Script by github.com/mardahl to gather info about the state of DMARC, SPF and Office365 DKIM on a list of domains
 #MIT License
+
+#Script by mum@apento.com to gather info about the state of DMARC on a list of domains
+
 
 #region declarations
 
@@ -7,7 +10,7 @@
 $resultOutput = ".\DMARCResults-$(get-date -format ddMMyyy)" # Do NOT define file extention as several will be used by the script!
 
 #get list of domains to process from this file
-$domainFile = Get-Content .\bsdomains.txt  #multiple domains one per line
+$domainFile = Get-Content .\domains.txt  #multiple domains one per line
 
 #DNS server (should not be local DNS to avoid split brain DNS errors)
 $DNSServer = "1.1.1.1" #CloudFlare DNS One One One One is default
@@ -33,11 +36,11 @@ foreach ($domain in $domains){
     $dompad = $(($dom + ".").PadRight(36))
     
   
-        $dmarc = Resolve-DnsName "_dmarc.$dom" -Server $DNSServer -Type txt -ErrorAction SilentlyContinue
+        $dmarc = Resolve-DnsName "_dmarc.$dom" -Server $DNSServer -Type txt -DnsOnly -ErrorAction SilentlyContinue
         if (!$dmarc.Strings){   
             Write-Host "$dompad is missing DMARC!" -ForegroundColor Yellow
-            $DMARCRecordValue, $DMARCRecordPolicy = 'N/A'
-     
+            $DMARCRecordValue = 'N/A' 
+            $DMARCRecordPolicy = 'N/A'
         } else {
             Write-Host "_dmarc.$dompad" $dmarc.Strings
             $DMARCRecordValue = [string]$dmarc.Strings 
@@ -55,8 +58,8 @@ foreach ($domain in $domains){
         $spf = Resolve-DnsName $dom -Server $DNSServer -Type txt -ErrorAction SilentlyContinue | where strings -Like "v=spf1*"
         if (!$spf.Strings){   
             Write-Host "$dompad is missing SPF!" -ForegroundColor Yellow
-            $SPFRecordValue, $SPFRecordPolicy = 'N/A'
-     
+            $SPFRecordValue = 'N/A'
+            $SPFRecordPolicy = 'N/A'
         } else {
             Write-Host "$dompad" $spf.Strings
             $SPFRecordValue = [string]$spf.Strings
@@ -75,9 +78,8 @@ foreach ($domain in $domains){
 
         $o365DKIM = Resolve-DnsName "selector1._domainkey.$dom" -Server $DNSServer -Type CNAME -ErrorAction SilentlyContinue
         if (-not ($o365DKIM.NameHost -like "*.onmicrosoft.com")){   
-            Write-Host "$dompad is missing Office 365 DKIM!" -ForegroundColor Yellow
+            Write-Host "$dompad does not have an Office 365 DKIM selector defined."
             $DKIMRecordExists = $false
-     
         } else {
             Write-Host "selector1._domainkey.$dompad" $o365DKIM.NameHost
             $DKIMRecordExists = $true
@@ -88,11 +90,11 @@ foreach ($domain in $domains){
             'Domain' = $dom
             'DMARCRecordExists' = $(if($DMARCRecordValue -eq 'N/A'){$false} else {$true})
             'DMARCRecordValue' = [string]$DMARCRecordValue
-            'DMARCRecordPolicy' = $DMARCRecordPolicy
+            'DMARCRecordPolicy' = [string]$DMARCRecordPolicy
             'O365DKIMExists' = $DKIMRecordExists
             'SPFRecordExists' = $(if($SPFRecordValue -eq 'N/A'){$false} else {$true})
-            'SPFRecordValue' = $SPFRecordValue
-            'SPFRecordPolicy' = $SPFRecordPolicy
+            'SPFRecordValue' = [string]$SPFRecordValue
+            'SPFRecordPolicy' = [string]$SPFRecordPolicy
            
         }
 
@@ -106,20 +108,21 @@ $js=@"
 "@
 $Header = @"
 <link href="https://tofsjonas.github.io/sortable/sortable.css" rel="stylesheet" />
-<style>td {border-bottom: 1px solid #333333;}</style>
+<style>td { border-bottom: 1px solid #333333; }
+</style>
 "@
 $htmlParams = @{
   Title = "DMARC status report $(get-date -format ddMMMyyy)"
   Head = "$Header"
   Body = "<H1>DMARC status report</H1>"
-  PreContent = "<p>$(get-date -format ddMMMyyy)</p>"
+  PreContent = "<p>$(get-date -format ddMMMyyy) - $($results.count) domains queried via DNS server $DNSServer</p>"
   PostContent = "$js"
 }
-#fix the output so we can sort the table and have issues highlighted
+#fix the output so we can sort the table
 $HTML = $results | ConvertTo-Html @htmlParams 
 $HTML = $HTML -replace '<TABLE>','<table class="sortable">'
-$HTML = $HTML -replace '<colgroup><col/><col/><col/><col/><col/><col/><col/><col/></colgroup>','<thead>'
-$HTML = $HTML -replace '<th>SPFRecordPolicy</th></tr>','<th>SPFRecordPolicy</th></tr></thead><tbody>'
+$HTML = $HTML -replace '<colgroup>.*</colgroup>','<thead>'
+$HTML = $HTML -replace '</th></tr>',"</th></tr></thead><tbody>"
 $HTML = $HTML -replace '</table>','</tbody></table>'
 $HTML = $HTML -replace '<td>True</td>','<td style="background-color:#ccffcc;">True</td>'
 $HTML = $HTML -replace '<td>False</td>','<td style="background-color:#cc3300;">False</td>'
@@ -127,6 +130,10 @@ $HTML = $HTML -replace '<td>none</td>','<td style="background-color:#cc3300;">no
 $HTML = $HTML -replace '<td>quarantine</td>','<td style="background-color:#ffd11a;">quarantine</td>'
 $HTML = $HTML -replace '<td>reject</td>','<td style="background-color:#ccffcc;">reject</td>'
 $HTML = $HTML -replace '<td>Error</td>','<td style="background-color:#ff0000;">Error</td>'
+$HTML = $HTML -replace '<td>Fail</td>','<td style="background-color:#ccffcc;">Fail</td>'
+$HTML = $HTML -replace '<td>SoftFail</td>','<td style="background-color:#ffd11a;">SoftFail</td>'
+$HTML = $HTML -replace '<td>Neutral</td>','<td style="background-color:#cc3300;">Neutral</td>'
+$HTML = $HTML -replace '<td>Pass</td>','<td style="background-color:#ff0000;">Pass</td>'
 $HTML | Out-File "$resultOutput.html" -Force
 
 
