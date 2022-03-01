@@ -6,7 +6,7 @@
     It will aid you in gaining a nice overview for getting to the goal of DMARC reject policy on all your domains.
 .INPUTS
     None
-    Just have a txt file calle domains.txt in the same directory as the script, with one domain per line in the file.
+    Just have a txt file called domains.txt in the same directory as the script, with one domain per line in the file.
 .NOTES
     Version       : 1.3
     Author        : Michael Mardahl
