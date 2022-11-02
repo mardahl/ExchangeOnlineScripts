@@ -7,7 +7,7 @@
         LASTEDIT: Nov 7, 2021
         
         ************
-        UPDATE: Nov 2022. Teh new EXO v3 PS module now support Managed Identity so this script is obsolete.
+        UPDATE: Nov 2022. The new EXO v3 PS module now support Managed Identity so this script is obsolete.
         https://learn.microsoft.com/en-us/powershell/module/exchange/connect-exchangeonline?view=exchange-ps
         ************
     
