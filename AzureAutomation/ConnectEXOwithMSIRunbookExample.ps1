@@ -5,6 +5,11 @@
     .NOTES
         AUTHOR: Michael Mardahl
         LASTEDIT: Nov 7, 2021
+        
+        ************
+        UPDATE: Nov 2022. Teh new EXO v3 PS module now support Managed Identity so this script is obsolete.
+        https://learn.microsoft.com/en-us/powershell/module/exchange/connect-exchangeonline?view=exchange-ps
+        ************
     
     .NOTES
         On line 52 there is a filter on the command names (cmdlets) that get imported for use.
@@ -29,7 +34,7 @@
 #>
 
 #region declarations
-$Script:tenantDomain = "xxxxxxxxxxx.onmicrosoft.com" #please endter the defualt domain of the tenant the managed identity belongs to.
+$Script:tenantDomain = "xxxxxxxxxxx.onmicrosoft.com" #please enter the defualt domain of the tenant the managed identity belongs to.
 #endregion declarations
 
 #region functions
