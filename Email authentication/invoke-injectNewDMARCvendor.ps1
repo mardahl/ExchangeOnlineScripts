@@ -14,7 +14,7 @@ $newRUF = "dmarc-ruf@domain.com"
 $policy = "none"
 
 
-"list of domains to process, (only one per line)
+#list of domains to process, (only one per line)
 $domains = @"
 example.com
 test.com
