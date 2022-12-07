@@ -13,6 +13,9 @@
     Licensing: MIT
 #>
 
+#Define the list of allowed company values
+$AllowedCompanies = @('Company A', 'CompanyB')
+
 # Create an empty array to store the user data
 $UserData = @()
 
