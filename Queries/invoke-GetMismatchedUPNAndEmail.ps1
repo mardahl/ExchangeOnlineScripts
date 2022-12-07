@@ -16,9 +16,6 @@
 #Define the list of allowed company values
 $AllowedCompanies = @('Company A', 'CompanyB')
 
-# Create an empty array to store the user data
-$UserData = @()
-
 # Search for users with mismatched UserPrincipalName and PrimarySMTPAddress
 $Users = Get-Mailbox -ResultSize Unlimited
 foreach ($User in $Users) {
