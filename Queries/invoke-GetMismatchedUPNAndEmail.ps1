@@ -20,20 +20,23 @@ $AllowedCompanies = @('Company A', 'CompanyB')
 $UserData = @()
 
 # Search for users with mismatched UserPrincipalName and PrimarySMTPAddress
-$Users = Get-User -ResultSize Unlimited
+$Users = Get-Mailbox -ResultSize Unlimited
 foreach ($User in $Users) {
     if ($AllowedCompanies -contains $User.Company) {
-        # Store the user's relevant data in a hash table
-        $UserInfo = @{
-            'UserPrincipalName' = $User.UserPrincipalName
-            'PrimarySMTPAddress' = $User.PrimarySMTPAddress
-            'Company' = $User.Company
+        if ($User.UserPrincipalName -ne $User.PrimarySMTPAddress) {
+            # Store the user's relevant data in a hash table
+            $UserInfo = @{
+                'DisplayName' = $User.DisplayName
+                'UserPrincipalName' = $User.UserPrincipalName
+                'PrimarySMTPAddress' = $User.PrimarySMTPAddress
+                'Company' = $User.Company
+                'IsDirSynced' = $User.IsDirSynced
+            }
         }
-
         # Add the user data to the array
         $UserData += New-Object PSObject -Property $UserInfo
     }
 }
 
 # Export the user data to a CSV file
-$UserData | Export-Csv -Path .\MismatchedUserData.csv -NoTypeInformation
+$UserData | Sort | Export-Csv -Path .\MismatchedUserData.csv -NoTypeInformation
