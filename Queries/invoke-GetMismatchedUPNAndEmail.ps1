@@ -39,4 +39,4 @@ foreach ($User in $Users) {
 }
 
 # Export the user data to a CSV file
-$UserData | Sort | Export-Csv -Path .\MismatchedUserData.csv -NoTypeInformation
+$UserData | Sort-Object DisplayName | Export-Csv -Path .\MismatchedUserData.csv -NoTypeInformation
