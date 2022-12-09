@@ -1,11 +1,9 @@
 <# .DESCRIPTION
-    This script searches Exchange Online mailboxes for users with mismatched UserPrincipalName and Mail,
+    This script searches Azure AD for users with mismatched UserPrincipalName and Mail,
     and outputs the results as a CSV file for further investigation.
 
     .NOTES
-    - This script assumes that the Exchange Online PowerShell module is installed and you are connected with enough permissions.
-    - This script requires that you have an active Exchange Online subscription, and that you have the necessary
-      permissions to access Exchange Online mailboxes.
+    - This script assumes that the Azure AD PowerShell module is installed and you are connected with enough permissions.
 
     Author: Michael Mardahl (github.com/mardahl)
     Licensing: MIT
